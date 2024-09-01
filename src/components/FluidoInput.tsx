@@ -1,5 +1,5 @@
-// src/components/FluidoInput.tsx
 import React from 'react';
+import { FluidoData } from '../types/types';
 
 interface FluidoInputProps {
     index: number;
@@ -8,34 +8,39 @@ interface FluidoInputProps {
 }
 
 const FluidoInput: React.FC<FluidoInputProps> = ({ index, fluido, handleChange }) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        handleChange(index, name as keyof FluidoData, value);
+    };
+
     return (
-        <div className="card">
-            <div className="card-header">Fluido {index + 1}</div>
+        <div className="form-group">
+            <h3>Fluido {index + 1}</h3>
             <label>
-                Nombre del fluido {index + 1}:
+                Nombre:
                 <input
                     type="text"
+                    name="nombre"
                     value={fluido.nombre}
-                    placeholder={`Fluido${index + 1}`}
-                    onChange={(e) => handleChange(index, 'nombre', e.target.value)}
+                    onChange={handleInputChange}
                 />
             </label>
             <label>
                 Densidad (kg/m³):
                 <input
                     type="number"
+                    name="densidad"
                     value={fluido.densidad}
-                    placeholder="1000"
-                    onChange={(e) => handleChange(index, 'densidad', e.target.value)}
+                    onChange={handleInputChange}
                 />
             </label>
             <label>
-                Altura (m):
+                Altura (metros):
                 <input
                     type="number"
+                    name="altura"
                     value={fluido.altura}
-                    placeholder="2"
-                    onChange={(e) => handleChange(index, 'altura', e.target.value)}
+                    onChange={handleInputChange}
                 />
             </label>
         </div>

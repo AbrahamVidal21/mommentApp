@@ -1,28 +1,31 @@
-// src/App.tsx
 import React, { useState } from 'react';
 import FluidoInput from './components/FluidoInput';
-import './style.css'
-
-interface FluidoData {
-  nombre: string;
-  densidad: number;
-  altura: number;
-}
+import FluidoCard from './components/fluidoCard'
+import { FluidoData } from './types/types';
+import { validateForm } from './formValidation'; // Importa el archivo de validación
+import './style.css';
 
 const App: React.FC = () => {
-  const [fluidoCount, setFluidoCount] = useState<number>(2);
+  const [fluidoCount, setFluidoCount] = useState<number>(3);
   const [fluidoData, setFluidoData] = useState<FluidoData[]>(
     Array.from({ length: fluidoCount }, () => ({
       nombre: '',
       densidad: 1000,
-      altura: 2
+      altura: 2,
     }))
   );
+  const [anchoTanque, setAnchoTanque] = useState<number>(5);
+  const [presionAtmosferica, setPresionAtmosferica] = useState<number>(101325);
+  const [gravedad, setGravedad] = useState<number>(9.81);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (index: number, field: keyof FluidoData, value: string) => {
     setFluidoData((prevData) => {
       const updatedData = [...prevData];
-      updatedData[index][field] = field === 'densidad' || field === 'altura' ? parseFloat(value) : value;
+      updatedData[index] = {
+        ...updatedData[index],
+        [field]: field === 'densidad' || field === 'altura' ? parseFloat(value) : value
+      };
       return updatedData;
     });
   };
@@ -33,23 +36,38 @@ const App: React.FC = () => {
     setFluidoData(Array.from({ length: count }, () => ({
       nombre: '',
       densidad: 1000,
-      altura: 2
+      altura: 2,
     })));
   };
 
-  const calculateResults = () => {
-    const Patm = 101325;
-    const g = 9.81;
-    const anchoTanque = 5;
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (name === 'anchoTanque') {
+      setAnchoTanque(parseFloat(value));
+    } else if (name === 'presionAtmosferica') {
+      setPresionAtmosferica(parseFloat(value));
+    } else if (name === 'gravedad') {
+      setGravedad(parseFloat(value));
+    }
+  };
 
-    let presionAbsolutaTotal = Patm;
+  const calculateResults = () => {
+    // Validar que todos los campos están completos
+    const isValid = validateForm(fluidoData, anchoTanque, presionAtmosferica, gravedad);
+    if (!isValid) {
+      setError('Por favor, complete todos los campos.');
+      return;
+    }
+    setError(null);
+
+    let presionAbsolutaTotal = presionAtmosferica;
     let fuerzaTotal = 0;
     let momentoTotal = 0;
     let alturaAcumulada = 0;
 
     fluidoData.forEach((fluido) => {
-      const { densidad, altura, nombre } = fluido;
-      const presionFluido = densidad * g * altura;
+      const { densidad, altura } = fluido;
+      const presionFluido = densidad * gravedad * altura;
       presionAbsolutaTotal += presionFluido;
 
       const areaFluido = altura * anchoTanque;
@@ -68,9 +86,9 @@ const App: React.FC = () => {
     const alturaCentroPresionTotal = momentoTotal / fuerzaTotal;
 
     alert(`Resultados:
-    \nPresión absoluta total en el fondo del tanque: ${presionAbsolutaTotal.toFixed(2)} Pascales
-    \nFuerza total en la cara frontal del tanque: ${fuerzaTotal.toFixed(2)} N
-    \nLa altura del centro de presión desde la base del tanque es: ${alturaCentroPresionTotal.toFixed(2)} metros`);
+      \nPresión absoluta total en el fondo del tanque: ${presionAbsolutaTotal.toFixed(2)} Pascales
+      \nFuerza total en la cara frontal del tanque: ${fuerzaTotal.toFixed(2)} N
+      \nLa altura del centro de presión desde la base del tanque es: ${alturaCentroPresionTotal.toFixed(2)} metros`);
   };
 
   return (
@@ -87,6 +105,39 @@ const App: React.FC = () => {
           />
         </label>
       </div>
+      <div className="form-group">
+        <label>
+          Ancho del tanque (metros):
+          <input
+            type="number"
+            name="anchoTanque"
+            value={anchoTanque}
+            onChange={handleInputChange}
+          />
+        </label>
+      </div>
+      <div className="form-group">
+        <label>
+          Presión atmosférica (Pascales):
+          <input
+            type="number"
+            name="presionAtmosferica"
+            value={presionAtmosferica}
+            onChange={handleInputChange}
+          />
+        </label>
+      </div>
+      <div className="form-group">
+        <label>
+          Gravedad (m/s²):
+          <input
+            type="number"
+            name="gravedad"
+            value={gravedad}
+            onChange={handleInputChange}
+          />
+        </label>
+      </div>
       {fluidoData.map((fluido, index) => (
         <FluidoInput
           key={index}
@@ -96,6 +147,14 @@ const App: React.FC = () => {
         />
       ))}
       <button onClick={calculateResults}>Calcular Resultados</button>
+      {error && <div className="error">{error}</div>}
+
+      {/* Añadir el componente FluidoCard aquí */}
+      <div className="fluido-cards">
+        {fluidoData.map((fluido, index) => (
+          <FluidoCard key={index} fluido={fluido} />
+        ))}
+      </div>
     </div>
   );
 };
