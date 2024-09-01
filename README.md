@@ -1,50 +1,14 @@
-# React + TypeScript + Vite
+# Mecánica de Fluidos
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+¡Bienvenido al proyecto de Mecánica de Fluidos! Este proyecto explora los conceptos básicos y aplicaciones de la dinámica de fluidos. Aquí encontrarás explicaciones, ejemplos y simulaciones para entender mejor cómo se comportan los fluidos en diferentes situaciones.
 
-Currently, two official plugins are available:
+## 🚀 Características
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Simulaciones básicas de fluidos
+- Ejemplos prácticos y teóricos
+- Análisis y visualización de datos
 
-## Expanding the ESLint configuration
+## 🎨 Pixel Art de Mecánica de Fluidos
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Aquí hay un simple pixel art que representa la idea de flujo de fluidos:
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
